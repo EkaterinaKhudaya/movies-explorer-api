@@ -9,7 +9,7 @@ const router = require('./routes/router');
 
 const allowedCors = [
   'localhost:3000',
-  // 'https://ekaterina.kh.nomoredomains.monster',
+  'https://moviesekaterinakh.space',
 ];
 
 const { port = 3000 } = process.env;
