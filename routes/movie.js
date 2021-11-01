@@ -1,11 +1,10 @@
 const movieRouter = require('express').Router();
-const {celebrate, Joi} = require('celebrate');
+const { celebrate, Joi } = require('celebrate');
 const validateURL = require('../validators/validators');
 
 const {
-  getMovies, createMovie, deleteMovie
+  getMovies, createMovie, deleteMovie,
 } = require('../controllers/movie');
-
 
 movieRouter.get('/', getMovies);
 movieRouter.post('/', celebrate({
@@ -20,15 +19,14 @@ movieRouter.post('/', celebrate({
     nameRU: Joi.string().required(),
     nameEN: Joi.string().required(),
     thumbnail: Joi.string().custom(validateURL),
-    movieId: Joi.string().length(24).hex()
+    movieId: Joi.string().length(24).hex(),
   }),
 }), createMovie);
 
 movieRouter.delete('/:movieId', celebrate({
-    params: Joi.object().keys({
-      movieId: Joi.string().length(24).hex(),
-    }),
-  }), deleteMovie)
-
+  params: Joi.object().keys({
+    movieId: Joi.string().length(24).hex(),
+  }),
+}), deleteMovie);
 
 module.exports = movieRouter;

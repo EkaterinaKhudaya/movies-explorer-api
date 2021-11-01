@@ -1,4 +1,4 @@
-const validator = require('validator')
+const validator = require('validator');
 
 const validateURL = (value) => {
   if (!validator.isURL(value, { require_protocol: true })) {

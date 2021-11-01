@@ -1,22 +1,36 @@
 const Movie = require('../models/movies');
-const DefaultError = require("../errors/defaultError");
-const ValidationError = require("../errors/validationError");
-const NotFoundError = require("../errors/notFoundError");
-const ForbiddenError = require("../errors/forbiddenError");
+const DefaultError = require('../errors/defaultError');
+const ValidationError = require('../errors/validationError');
+const NotFoundError = require('../errors/notFoundError');
+const ForbiddenError = require('../errors/forbiddenError');
 
-const getMovies = (req, res, next) => {
-  return Movie.find({})
+const getMovies = (req, res, next) => Movie.find({})
   .then((movies) => res.send('200', movies))
   .catch(() => {
     const error = new DefaultError('Произошла ошибка на сервере');
     next(error);
   });
-}
 
 const createMovie = (req, res, next) => {
-  const { country, director, duration, year, description, image, trailer, nameRU, nameEN,thumbnail, movieId  } = req.body;
+  const {
+    country, director, duration, year, description,
+    image, trailer, nameRU, nameEN, thumbnail, movieId,
+  } = req.body;
   const owner = req.user._id;
-  return Movie.create({ country, director, duration, year, description, image, trailer, nameRU, nameEN,thumbnail, movieId, owner })
+  return Movie.create({
+    country,
+    director,
+    duration,
+    year,
+    description,
+    image,
+    trailer,
+    nameRU,
+    nameEN,
+    thumbnail,
+    movieId,
+    owner,
+  })
     .then((movies) => res.send('201', movies))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -30,10 +44,9 @@ const createMovie = (req, res, next) => {
 };
 
 const deleteMovie = (req, res, next) => {
-  const movieId = req.params.movieId
-  return Movie.findOne({ movieId } )
+  const { movieId } = req.params;
+  return Movie.findOne({ movieId })
     .then((movie) => {
-      console.log(movie)
       if (!movie) {
         const error = new NotFoundError('Фильм с указанным movieId не найдена.');
         next(error);
@@ -58,5 +71,5 @@ const deleteMovie = (req, res, next) => {
 };
 
 module.exports = {
-  getMovies, createMovie, deleteMovie
+  getMovies, createMovie, deleteMovie,
 };

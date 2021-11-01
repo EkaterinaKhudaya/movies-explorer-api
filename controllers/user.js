@@ -1,14 +1,13 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/users');
-const NotFoundError = require("../errors/notFoundError");
-const DefaultError = require("../errors/defaultError");
-const ValidationError = require("../errors/validationError");
-const ConflictError = require("../errors/conflictError");
-const UnauthorisedError = require("../errors/unauthtorisedError");
+const NotFoundError = require('../errors/notFoundError');
+const DefaultError = require('../errors/defaultError');
+const ValidationError = require('../errors/validationError');
+const ConflictError = require('../errors/conflictError');
+const UnauthorisedError = require('../errors/unauthtorisedError');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
-
 
 const getUserInfo = (req, res, next) => User.findById(req.user._id)
   .then((user) => {
@@ -25,7 +24,7 @@ const getUserInfo = (req, res, next) => User.findById(req.user._id)
   });
 
 const changeUserInfo = (req, res, next) => {
-  const {email, name} = req.body
+  const { email, name } = req.body;
 
   return User.findByIdAndUpdate(req.user._id, { email, name }, { new: true, runValidators: true })
     .then((user) => {
@@ -34,11 +33,12 @@ const changeUserInfo = (req, res, next) => {
         next(error);
       } else {
         const {
+          // eslint-disable-next-line no-shadow
           email, name, _id,
         } = user;
         res.status(200).send({
           data: {
-           email, name, _id,
+            email, name, _id,
           },
         });
       }
@@ -55,8 +55,7 @@ const changeUserInfo = (req, res, next) => {
         next(error);
       }
     });
-}
-
+};
 
 const createUser = (req, res, next) => {
   const {
@@ -71,7 +70,7 @@ const createUser = (req, res, next) => {
       }
       return bcrypt.hash(password, 10)
         .then((hash) => User.create({
-          name,email, password: hash,
+          name, email, password: hash,
         })
           // eslint-disable-next-line no-shadow
           .then(() => {
@@ -125,7 +124,6 @@ const login = (req, res, next) => {
     });
 };
 
-
 module.exports = {
-  createUser, login, getUserInfo, changeUserInfo
+  createUser, login, getUserInfo, changeUserInfo,
 };

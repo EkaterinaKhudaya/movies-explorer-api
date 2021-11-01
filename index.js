@@ -15,6 +15,7 @@ const allowedCors = [
 const { port = 3000 } = process.env;
 const app = express();
 
+// eslint-disable-next-line no-console
 mongoose.connect('mongodb://localhost:27017/diplomMovies', (err) => console.log(err));
 app.use(requestLogger);
 
@@ -46,11 +47,13 @@ app.use((req, res, next) => {
   next(error);
 });
 
+// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
   res.status(statusCode).send({ message: statusCode === 500 ? 'Ошибка на сервере' : message });
 });
 
 app.listen(port, () => {
-    console.log('Start successfully');
-})
+  // eslint-disable-next-line no-console
+  console.log('Start successfully');
+});
