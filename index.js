@@ -41,13 +41,13 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(router);
-app.use(errorLogger);
-app.use(errors());
-
 app.use((req, res, next) => {
   const error = new NotFoundError('Страницы не существует');
   next(error);
 });
+app.use(errorLogger);
+app.use(errors());
+
 
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
