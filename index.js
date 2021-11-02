@@ -18,7 +18,7 @@ const { port = 3000 } = process.env;
 const app = express();
 
 // eslint-disable-next-line no-console
-mongoose.connect(NODE_ENV === 'production' ? MONGO_DB : 'mongodb://localhost:27017/movies', (err) => console.log(err));
+mongoose.connect(NODE_ENV === 'production' ? MONGO_DB : 'mongodb://localhost:27017/moviesdb', (err) => console.log(err));
 app.use(requestLogger);
 
 app.use((req, res, next) => {

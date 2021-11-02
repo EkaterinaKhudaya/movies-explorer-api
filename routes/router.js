@@ -8,11 +8,11 @@ const {
 } = require('../controllers/user');
 const verifyToken = require('../middlewares/auth');
 
-router.use('/', verifyToken);
 
 router.use('/users', verifyToken, userRouter);
 
 router.use('/movies', verifyToken, movieRouter);
+
 
 router.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -28,5 +28,7 @@ router.post('/signup', celebrate({
     password: Joi.string().required(),
   }),
 }), createUser);
+
+router.get('/', verifyToken);
 
 module.exports = router;
