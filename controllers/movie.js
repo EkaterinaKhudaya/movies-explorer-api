@@ -48,11 +48,11 @@ const deleteMovie = (req, res, next) => {
     .then((movie) => {
       if (!movie) {
         const error = new NotFoundError('Фильм с указанным id не найдена.');
-        next(error);
+        return next(error);
       }
       if (!movie.owner.equals(req.user._id)) {
         const error = new ForbiddenError('Нельзя удалить чужой фильм.');
-        next(error);
+        return next(error);
       } else {
         return Movie.deleteOne(movie)
           .then(() => res.send('201', movie));

@@ -1,7 +1,7 @@
 {
   "name": "movies-explorer-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "Дипломная работа. Бекэнд для сайта https://moviesekaterinakh.space",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
