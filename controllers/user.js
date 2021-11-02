@@ -7,7 +7,7 @@ const ValidationError = require('../errors/validationError');
 const ConflictError = require('../errors/conflictError');
 const UnauthorisedError = require('../errors/unauthtorisedError');
 
-const { NODE_ENV, JWT_SECRET } = process.env;
+const {NODE_ENV, JWT_SECRET} = process.env;
 
 const getUserInfo = (req, res, next) => User.findById(req.user._id)
   .then((user) => {
@@ -15,7 +15,7 @@ const getUserInfo = (req, res, next) => User.findById(req.user._id)
       const error = new NotFoundError('Пользователь не найден.');
       next(error);
     } else {
-      res.status(200).send({ data: user });
+      res.status(200).send({data: user});
     }
   })
   .catch(() => {
@@ -24,37 +24,55 @@ const getUserInfo = (req, res, next) => User.findById(req.user._id)
   });
 
 const changeUserInfo = (req, res, next) => {
-  const { email, name } = req.body;
-
-  return User.findByIdAndUpdate(req.user._id, { email, name }, { new: true, runValidators: true })
+  const {email, name} = req.body;
+  User.findOne({email})
     .then((user) => {
-      if (!user) {
-        const error = new NotFoundError('Пользователь с указанным _id не найден.');
+      if (user && user._id.toString() !== req.user._id) {
+        const error = new ConflictError('Пользователь с такой почтой уже существует.');
         next(error);
-      } else {
-        const {
-          // eslint-disable-next-line no-shadow
-          email, name, _id,
-        } = user;
-        res.status(200).send({
-          data: {
-            email, name, _id,
-          },
-        });
       }
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (user && user._id.toString() === req.user._id && (user.email === email || user.name === name)) {
         const error = new ValidationError('Переданы некорректные данные при обновлении пользователя');
         next(error);
-      } else if (err.name === 'CastError') {
-        const error = new ValidationError('Невалидный id');
-        next(error);
       } else {
-        const error = new DefaultError('Произошла ошибка на сервере');
-        next(error);
+        User.findByIdAndUpdate(req.user._id, {email, name}, {new: true, runValidators: true})
+          .then((user) => {
+            if (!user) {
+              const error = new NotFoundError('Пользователь с указанным _id не найден.');
+              next(error);
+            }
+            const {
+              email, name, _id,
+            } = user;
+            res.status(200).send({
+              data: {
+                email, name, _id,
+              },
+            });
+            res.end()
+
+          })
+          .catch((err) => {
+            if (err.name === 'ValidationError') {
+              const error = new ValidationError('Переданы некорректные данные при обновлении пользователя');
+              next(error);
+            } else if (err.name === 'CastError') {
+              const error = new ValidationError('Невалидный id');
+              next(error);
+            } else {
+              const error = new DefaultError('Произошла ошибка на сервере');
+              next(error);
+            }
+          });
       }
-    });
+
+    })
+    .catch(() => {
+      const error = new DefaultError('Произошла ошибка на сервере');
+      next(error);
+    })
+
+
 };
 
 const createUser = (req, res, next) => {
@@ -62,7 +80,7 @@ const createUser = (req, res, next) => {
     name, email, password,
   } = req.body;
 
-  User.findOne({ email })
+  User.findOne({email})
     .then((user) => {
       if (user) {
         const error = new ConflictError('Такой пользователь уже есть');
@@ -72,7 +90,6 @@ const createUser = (req, res, next) => {
         .then((hash) => User.create({
           name, email, password: hash,
         })
-          // eslint-disable-next-line no-shadow
           .then(() => {
             res.status(201).send({
               data: {
@@ -89,16 +106,20 @@ const createUser = (req, res, next) => {
               next(error);
             }
           }));
+    })
+    .catch((err) => {
+      const error = new UnauthorisedError(err.message);
+      next(error);
     });
 };
 
 const login = (req, res, next) => {
-  const { email, password } = req.body;
+  const {email, password} = req.body;
   if (!email || !password) {
     const error = new ValidationError('Нет email или пароля');
     next(error);
   }
-  return User.findOne({ email }).select('+password')
+  return User.findOne({email}).select('+password')
     .then((user) => {
       if (!user) {
         const error = new UnauthorisedError('Логин или пароль не совпадают');
@@ -113,8 +134,8 @@ const login = (req, res, next) => {
           const error = new UnauthorisedError('Логин или пароль не совпадают');
           next(error);
         } else {
-          const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'secreteKey', { expiresIn: '7d' });
-          res.send({ token });
+          const token = jwt.sign({_id: user._id}, NODE_ENV === 'production' ? JWT_SECRET : 'secreteKey', {expiresIn: '7d'});
+          res.send({token});
         }
       });
     })

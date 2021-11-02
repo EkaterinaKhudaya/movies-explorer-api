@@ -8,16 +8,12 @@ const {
 } = require('../controllers/user');
 const verifyToken = require('../middlewares/auth');
 
+router.use('/', verifyToken);
+
 router.use('/users', verifyToken, userRouter);
 
 router.use('/movies', verifyToken, movieRouter);
 
-// router.get('/crash-test', () => {
-//   setTimeout(() => {
-//     throw new Error('Сервер сейчас упадёт');
-//   }, 0);
-// });
-//
 router.post('/signin', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
