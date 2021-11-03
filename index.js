@@ -3,7 +3,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
-const {NODE_ENV,MONGO_DB} = process.env;
+
+const { NODE_ENV, MONGO_DB } = process.env;
 const NotFoundError = require('./errors/notFoundError');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
@@ -48,12 +49,11 @@ app.use((req, res, next) => {
 app.use(errorLogger);
 app.use(errors());
 
-
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
   res.status(statusCode).send({ message: statusCode === 500 ? 'Ошибка на сервере' : message });
+  next();
 });
 
 app.listen(port, () => {
-  console.log('Start successfully');
 });

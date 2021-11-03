@@ -43,31 +43,28 @@ const createMovie = (req, res, next) => {
     });
 };
 
-const deleteMovie = (req, res, next) => {
-  return Movie.findById(req.params.movieId)
-    .then((movie) => {
-      if (!movie) {
-        const error = new NotFoundError('Фильм с указанным id не найдена.');
-        return next(error);
-      }
-      if (!movie.owner.equals(req.user._id)) {
-        const error = new ForbiddenError('Нельзя удалить чужой фильм.');
-        return next(error);
-      } else {
-        return Movie.deleteOne(movie)
-          .then(() => res.send('201', movie));
-      }
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        const error = new ValidationError('Невалидный id');
-        next(error);
-      } else {
-        const error = new DefaultError('Произошла ошибка на сервере');
-        next(error);
-      }
-    });
-};
+const deleteMovie = (req, res, next) => Movie.findById(req.params.movieId)
+  .then((movie) => {
+    if (!movie) {
+      const error = new NotFoundError('Фильм с указанным id не найдена.');
+      return next(error);
+    }
+    if (!movie.owner.equals(req.user._id)) {
+      const error = new ForbiddenError('Нельзя удалить чужой фильм.');
+      return next(error);
+    }
+    return Movie.deleteOne(movie)
+      .then(() => res.send('201', movie));
+  })
+  .catch((err) => {
+    if (err.name === 'CastError') {
+      const error = new ValidationError('Невалидный id');
+      next(error);
+    } else {
+      const error = new DefaultError('Произошла ошибка на сервере');
+      next(error);
+    }
+  });
 
 module.exports = {
   getMovies, createMovie, deleteMovie,
