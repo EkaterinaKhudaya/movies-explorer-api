@@ -36,7 +36,7 @@ const changeUserInfo = (req, res, next) => {
         const error = new ValidationError('Переданы некорректные данные при обновлении пользователя');
         next(error);
       } else {
-        user.findByIdAndUpdate(req.user._id, { email, name }, { new: true, runValidators: true })
+        User.findByIdAndUpdate(req.user._id, { email, name }, { new: true, runValidators: true })
           .then((response) => {
             if (!response) {
               const error = new NotFoundError('Пользователь с указанным _id не найден.');

@@ -27,6 +27,5 @@ router.post('/signup', celebrate({
   }),
 }), createUser);
 
-router.get('/', verifyToken);
-
+router.use('/', verifyToken);
 module.exports = router;
