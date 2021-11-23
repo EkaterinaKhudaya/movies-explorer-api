@@ -32,7 +32,7 @@ const changeUserInfo = (req, res, next) => {
         next(error);
       }
       if (user && user._id.toString() === req.user._id
-        && (user.email === email || user.name === name)) {
+        && (user.email === email && user.name === name)) {
         const error = new ValidationError('Переданы некорректные данные при обновлении пользователя');
         next(error);
       } else {
