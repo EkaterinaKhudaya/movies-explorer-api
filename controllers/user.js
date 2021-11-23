@@ -90,7 +90,7 @@ const createUser = (req, res, next) => {
           .then(() => {
             res.status(201).send({
               data: {
-                name, email,
+                name, email, password,
               },
             });
           })
