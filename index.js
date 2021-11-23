@@ -11,7 +11,7 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const router = require('./routes/router');
 
 const allowedCors = [
-  'localhost:3000',
+  'http://localhost:3000',
   'https://moviesekaterinakh.space',
 ];
 
