@@ -6,7 +6,7 @@ const ForbiddenError = require('../errors/forbiddenError');
 
 const getMovies = (req, res, next) => Movie.find({})
   .then((movies) => {
-    res.send('200', filter);
+    res.send('200', movies);
   })
   .catch(() => {
     const error = new DefaultError('Произошла ошибка на сервере');
