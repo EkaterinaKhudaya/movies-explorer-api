@@ -5,7 +5,10 @@ const NotFoundError = require('../errors/notFoundError');
 const ForbiddenError = require('../errors/forbiddenError');
 
 const getMovies = (req, res, next) => Movie.find({})
-  .then((movies) => res.send('200', movies))
+  .then((movies) => {
+    const filter = movies.filter((item) => item.owner === req.user._id)
+    res.send('200', filter);
+  })
   .catch(() => {
     const error = new DefaultError('Произошла ошибка на сервере');
     next(error);
